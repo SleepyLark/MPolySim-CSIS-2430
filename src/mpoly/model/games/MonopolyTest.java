@@ -1,0 +1,402 @@
+package mpoly.model.games;
+
+import mpoly.controller.MPolyController;
+import mpoly.model.cards.*;
+import mpoly.model.dealers.*;
+import mpoly.model.players.MonopolyBot;
+
+public class MonopolyTest extends GameMaster
+{
+	/**
+	 * 
+	00 Go
+	01 Mediterranean Avenue
+	02 Community Chest
+	03 Baltic Avenue
+	04 Income Tax
+	05 Reading Railroad
+	06 Oriental Avenue
+	07 Chance
+	08 Vermont Avenue
+	09 Connecticut Avenue
+	10 Jail / Just Visiting
+	11 St. Charles Place
+	12 Electric Company
+	13 States Avenue
+	14 Virginia Avenue
+	15 Pennsylvania Railroad
+	16 St. James Place
+	17 Community Chest
+	18 Tennessee Avenue
+	19 New York Avenue
+	20 Free Parking
+	21 Kentucky Avenue
+	22 Chance
+	23 Indiana Avenue
+	24 Illinois Avenue
+	25 B. & O. Railroad
+	26 Atlantic Avenue
+	27 Ventnor Avenue
+	28 Water Works
+	39 Marvin Gardens
+	30 Go To Jail
+	31 Pacific Avenue
+	32 North Carolina Avenue
+	33 Community Chest
+	34 Pennsylvania Avenue
+	35 Short Line
+	36 Chance
+	37 Park Place
+	38 Luxury Tax
+	39 Boardwalk
+	 */
+	private MPolyController app;
+	private MonopolyBot bot;
+	private ChanceDeck chanceDeck;
+	private ChestDeck chestDeck;
+	private int doubleCounter;
+	private int[] gameBoard;
+	private int playerPos;
+	private int jailCount;
+	private int jailedFromCard;
+	private int jailedFromSpace;
+	private int jailedFromSpeed;
+	private boolean speeding;
+	private boolean stratB;
+	private int jailBond;
+	private int[][] snapshot;
+	private String[] spaces = {
+			"Go",
+			"Mediterranean Avenue",
+			"Community Chest",
+			"Baltic Avenue",
+			"Income Tax",
+			"Reading Railroad",
+			"Oriental Avenue",
+			"Chance",
+			"Vermont Avenue",
+			"Connecticut Avenue",
+			"Jail / Just Visiting",
+			"St. Charles Place",
+			"Electric Company",
+			"States Avenue",
+			"Virginia Avenue",
+			"Pennsylvania Railroad",
+			"St. James Place",
+			"Community Chest",
+			"Tennessee Avenue",
+			"New York Avenue",
+			"Free Parking",
+			"Kentucky Avenue",
+			"Chance",
+			"Indiana Avenue",
+			"Illinois Avenue",
+			"B. & O. Railroad",
+			"Atlantic Avenue",
+			"Ventnor Avenue",
+			"Water Works",
+			"Marvin Gardens",
+			"Go To Jail",
+			"Pacific Avenue",
+			"North Carolina Avenue",
+			"Community Chest",
+			"Pennsylvania Avenue",
+			"Short Line",
+			"Chance",
+			"Park Place",
+			"Luxury Tax",
+	"Boardwalk"};
+
+	public MonopolyTest(MPolyController app)
+	{
+		this.app = app;
+		bot = new MonopolyBot();
+		chanceDeck = new ChanceDeck(app);
+		chestDeck = new ChestDeck(app);
+		doubleCounter = 0;
+		jailCount = 0;
+		jailedFromCard = 0;
+		jailedFromSpace = 0;
+		jailedFromSpeed =0;
+		gameBoard = new int[40]; //monopoly board has 40 spaces
+		playerPos = 0;
+		jailBond = 0;
+		snapshot = new int[4][40];
+		speeding = false;
+		stratB = false;
+	}
+
+	@Override
+	public void startGame()
+	{
+		while(this.turnCount < 1000)
+		{
+			play();
+		}
+		snapshot[0] = gameBoard.clone();
+
+		while(this.turnCount < 10000)
+		{
+			play();
+		}
+		snapshot[1]=gameBoard.clone();
+
+		while(this.turnCount < 100000)
+		{
+			play();
+		}
+		snapshot[2]=gameBoard.clone();
+
+		while(this.turnCount < 1000000)
+		{
+			play();
+		}
+		snapshot[3]=gameBoard.clone();
+
+		app.out(this.printBoard(snapshot));
+		app.out("you were jailed "+jailCount+" times ._.");
+		app.out("drew the jail card "+jailedFromCard+" times");
+		app.out("landed on 'Go To Jail' "+jailedFromSpace+" times");
+		app.out("caught speeding "+jailedFromSpeed+" times");
+		app.out("paid "+jailBond+" in jail money");
+
+
+	}
+
+	@Override
+	protected void setupGame()
+	{
+		this.addToGame(bot);
+		chanceDeck.shuffleCards();
+		chestDeck.shuffleCards();
+
+
+	}
+
+	private void restart()
+	{
+		this.reset();
+		chanceDeck.destroyDeck();
+		chanceDeck.buildDeck();
+		chanceDeck.shuffleCards();
+		chestDeck.destroyDeck();
+		chestDeck.buildDeck();
+		chestDeck.shuffleCards();
+		bot.destroyHand();
+
+	}
+
+	private void play()
+	{
+		int diceRoll = rollDice();
+
+		if(doubleCounter >= 3)
+		{
+			goToJail();	
+			jailedFromSpeed++;
+		}
+
+		playerPos = (diceRoll + playerPos) % 40;
+		gameBoard[playerPos]++;
+		switch(playerPos)
+		{
+		case 2:
+		case 17:
+		case 33:
+			drawFromChest(chestDeck.draw());
+			break;
+		case 7:
+		case 22:
+		case 36:
+			drawFromChance(chanceDeck.draw());
+			break;
+		case 30:
+			goToJail();
+			jailedFromSpace++;
+			break;
+		}
+
+		if(doubleCounter == 0)
+		{
+			this.next();
+		}
+	}
+
+
+	private int rollDice()
+	{
+		int die1 = Dealer.randomInt(1,6);
+		int die2 = Dealer.randomInt(1,6);
+		if(die1 == die2)
+		{
+			doubleCounter++;
+		}
+		else
+			doubleCounter = 0;
+
+		return die1+die2;
+	}
+
+	private void drawFromChest(Card nextCard)
+	{
+		boolean addedToHand = drawFromDeck(nextCard);
+		if(!addedToHand)
+		{
+			chestDeck.discard(nextCard);
+		}
+		if(chestDeck.isDrawDeckEmpty())
+		{
+			chestDeck.reshuffleDiscardPile();
+		}
+	}
+
+	private void drawFromChance(Card nextCard)
+	{
+		boolean addedToHand = drawFromDeck(nextCard);
+		int cardValue = nextCard.getNum();
+		if(cardValue >= 2 && cardValue <= 9)
+		{
+			switch(cardValue)
+			{
+			case ChanceCard.GO_BACK:
+				if(playerPos - 3 < 0)
+				{
+					playerPos = (playerPos - 3) + playerPos; 
+				}
+				else
+					playerPos = playerPos - 3;
+				break;
+
+			case ChanceCard.TO_BOARDWALK:
+				playerPos = 39;
+				break;
+
+			case ChanceCard.TO_ILLINOIS:
+				playerPos = 24;
+				break;
+
+			case ChanceCard.TO_CHARLES:
+				playerPos = 11;
+				break;
+
+			case ChanceCard.TO_RAILROAD_1:
+			case ChanceCard.TO_RAILROAD_2:
+				goToNearestRailroad();
+				break;
+
+			case ChanceCard.TO_READING:
+				playerPos = 5;
+				break;
+
+			case ChanceCard.TO_UTILITY:
+				goToNearestUtility();
+				break;
+			}
+
+			gameBoard[playerPos]++;
+		}
+
+
+		if(!addedToHand)
+		{
+			chanceDeck.discard(nextCard);
+		}
+		
+		if(chanceDeck.isDrawDeckEmpty())
+		{
+			chanceDeck.reshuffleDiscardPile();
+		}
+	}
+	private boolean drawFromDeck(Card nextCard)
+	{
+		boolean addedToHand = nextCard.isJailBreak();
+		if(nextCard.isJailBreak())
+			bot.addToHand(nextCard);
+		else if(nextCard.isJail())
+		{
+			goToJail();
+			jailedFromCard++;
+		}
+		else if(nextCard.isGo())
+		{
+			playerPos = 0;
+			gameBoard[playerPos]++;
+		}
+
+		return addedToHand;
+	}
+
+	private void goToJail()
+	{
+		doubleCounter = 0;
+		playerPos = 10;
+		boolean free = false;
+
+		jailCount++;
+		this.next(); //lose turn
+
+		//assume that if it has any cards then it must be a get out of jail free card
+		if(bot.getHandSize() > 0)
+		{
+			bot.discardCard(0);
+		}
+		else
+		{
+			if(stratB)
+			{
+				int attempts = 0;
+				//skip two turns. On third must pay fee and move on if no doubles
+				while(attempts < 2)
+				{
+					rollDice();
+					if(doubleCounter == 1)
+					{
+						free = true;
+						break;
+					}
+					attempts++;
+					this.next();
+				}
+
+				if(!free)
+				{
+					rollDice();
+					if(doubleCounter == 0)
+					{
+						jailBond -= 50;
+					}
+				}
+
+			}
+			else
+			{
+				jailBond -= 50;
+			}
+		}
+	}
+
+	private void goToNearestRailroad()
+	{
+
+	}
+
+	private void goToNearestUtility()
+	{
+
+	}
+
+	private String printBoard(int[][] sample)
+	{
+		String print = "";
+		int total =0;
+		for(int i = 0; i < sample[0].length; i++)
+		{
+			print += spaces[i]+":"+sample[0][i]+" times\n";
+		}
+		print += "Total: "+total;
+
+		return print;
+
+	}
+
+}
