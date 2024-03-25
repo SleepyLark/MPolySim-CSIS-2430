@@ -392,12 +392,36 @@ public class MonopolyTest extends GameMaster
 
 	private void goToNearestRailroad()
 	{
-
+		//assumption is you can only go to the nearest railroad if you drew a chance card
+		//chance spaces are only on 7, 22, and 36
+		switch(playerPos)
+		{
+		case 7:
+			playerPos = 15;
+			break;
+		case 22:
+			playerPos = 25;
+			break;
+		case 36:
+			playerPos = 5;
+			break;
+		}
 	}
 
 	private void goToNearestUtility()
 	{
-
+		//assumption is you can only go to the nearest utility if you drew a chance card
+		//chance spaces are only on 7, 22, and 36, and there's only 2 utilities
+		switch(playerPos)
+		{
+		case 22:
+			playerPos = 28;
+			break;
+		case 7:
+		case 36:
+			playerPos = 12;
+			break;
+		}
 	}
 
 	private String printBoard(int[][] sample)
