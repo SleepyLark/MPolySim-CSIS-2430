@@ -61,7 +61,7 @@ public class MonopolyTest extends GameMaster
 	private int jailedFromCard;
 	private int jailedFromSpace;
 	private int jailedFromSpeed;
-	private boolean speeding;
+	private boolean outOfJail;
 	private boolean stratB;
 	private int jailBond;
 	private int[][] snapshot;
@@ -124,7 +124,7 @@ public class MonopolyTest extends GameMaster
 		playerPos = 0;
 		jailBond = 0;
 		snapshot = new int[4][40];
-		speeding = false;
+		outOfJail = true;
 		stratB = false;
 	}
 
@@ -194,6 +194,50 @@ public class MonopolyTest extends GameMaster
 		{
 			goToJail();	
 			jailedFromSpeed++;
+		}
+		
+		if(!outOfJail)
+		{
+			if(stratB)
+			{
+				int attempts = 0;
+				//skip two turns. On third must pay fee and move on if no doubles
+				while(attempts < 2)
+				{
+					diceRoll = rollDice();
+					if(doubleCounter == 1)
+					{
+						/**
+						 *  if you succeed in doing this you immediately move forward
+						the number of spaces shown by your doubles throw; even though you
+						had thrown doubles, you do not take another turn;
+						 */
+						outOfJail = true;
+						break;
+					}
+					attempts++;
+					this.next();
+				}
+
+				if(!outOfJail)
+				{
+					diceRoll = rollDice();
+
+					if(doubleCounter == 0)
+					{
+						jailBond -= 50;
+					}
+					else
+						doubleCounter = 0;
+				}
+
+			}
+			else
+			{
+				jailBond -= 50;
+			}
+			
+			outOfJail = true;
 		}
 
 		playerPos = (diceRoll + playerPos) % 40;
@@ -330,10 +374,8 @@ public class MonopolyTest extends GameMaster
 	{
 		doubleCounter = 0;
 		playerPos = 10; //move player to jail
-		boolean free = false;
-
+		outOfJail = false;
 		jailCount++;
-		this.next(); //lose turn
 
 		//assume that if player has any cards then it must be a get out of jail free card
 		if(bot.getHandSize() > 0)
@@ -343,41 +385,8 @@ public class MonopolyTest extends GameMaster
 				chestDeck.discard(discard);
 			else if(discard.getType() == Card.IS_CHANCE)
 				chanceDeck.discard(discard);
-		}
-		
-		else
-		{
-			if(stratB)
-			{
-				int attempts = 0;
-				//skip two turns. On third must pay fee and move on if no doubles
-				while(attempts < 2)
-				{
-					rollDice();
-					if(doubleCounter == 1)
-					{
-						free = true;
-						break;
-					}
-					attempts++;
-					this.next();
-				}
-
-				if(!free)
-				{
-					rollDice();
-					
-					if(doubleCounter == 0)
-					{
-						jailBond -= 50;
-					}
-				}
-
-			}
-			else
-			{
-				jailBond -= 50;
-			}
+			
+			outOfJail = true;
 		}
 	}
 
@@ -407,19 +416,19 @@ public class MonopolyTest extends GameMaster
 	
 	private void testDebug()
 	{
-		app.out("you were jailed "+jailCount+" times ._.");
+		app.out("you were jailed "+jailCount+" times");
 		app.out("drew the jail card "+jailedFromCard+" times");
 		app.out("landed on 'Go To Jail' "+jailedFromSpace+" times");
 		app.out("caught speeding "+jailedFromSpeed+" times");
 		app.out("paid "+jailBond+" in jail money");
 		
-		app.out("Chance Deck:");
-		chanceDeck.drawDebug();
-		chanceDeck.discardDebug();
-		
-		app.out("Chest Deck:");
-		chestDeck.drawDebug();
-		chestDeck.discardDebug();
+//		app.out("Chance Deck:");
+//		chanceDeck.drawDebug();
+//		chanceDeck.discardDebug();
+//		
+//		app.out("Chest Deck:");
+//		chestDeck.drawDebug();
+//		chestDeck.discardDebug();
 	
 	}
 
