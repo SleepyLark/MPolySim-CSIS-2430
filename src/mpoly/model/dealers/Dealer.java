@@ -41,6 +41,7 @@ public abstract class Dealer
 	public void destroyDeck()
 	{
 		drawDeck = new ArrayList<Card>();
+		discardPile = new ArrayList<Card>();
 	}
 	
 	/**
@@ -225,6 +226,12 @@ public abstract class Dealer
 		
 		return desc;
 	}
+	
+	public void drawDebug()
+	{
+		drawDebug(-1);
+	}
+	
 	public void drawDebug(int numberOfCardsToShow)
 	{
 		if(numberOfCardsToShow > deckSize() || numberOfCardsToShow < 0)
@@ -234,6 +241,11 @@ public abstract class Dealer
 		app.out("====[DRAW DECK DEBUG]====");
 		app.out("Last card drawn: " + lastCardDrawn);
 		app.out("Cards still in deck: \n" + readableList(drawDeck,numberOfCardsToShow));
+	}
+	
+	public void discardDebug()
+	{
+		discardDebug(-1);
 	}
 	
 	public void discardDebug(int numberOfCardsToShow)

@@ -41,4 +41,10 @@ public abstract class Card
     {
     	return number == ADVANCE_TO_GO;
     }
+    
+    public String toString()
+    {
+    	String type = number+"";
+    	return type;
+    }
 }

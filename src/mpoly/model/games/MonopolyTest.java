@@ -65,7 +65,8 @@ public class MonopolyTest extends GameMaster
 	private boolean stratB;
 	private int jailBond;
 	private int[][] snapshot;
-	private String[] spaces = {
+	private String[] spaces = 
+		{
 			"Go",
 			"Mediterranean Avenue",
 			"Community Chest",
@@ -105,7 +106,8 @@ public class MonopolyTest extends GameMaster
 			"Chance",
 			"Park Place",
 			"Luxury Tax",
-	"Boardwalk"};
+			"Boardwalk"
+		};
 
 	public MonopolyTest(MPolyController app)
 	{
@@ -154,11 +156,9 @@ public class MonopolyTest extends GameMaster
 		snapshot[3]=gameBoard.clone();
 
 		app.out(this.printBoard(snapshot));
-		app.out("you were jailed "+jailCount+" times ._.");
-		app.out("drew the jail card "+jailedFromCard+" times");
-		app.out("landed on 'Go To Jail' "+jailedFromSpace+" times");
-		app.out("caught speeding "+jailedFromSpeed+" times");
-		app.out("paid "+jailBond+" in jail money");
+		
+		
+		testDebug();
 
 
 	}
@@ -329,17 +329,22 @@ public class MonopolyTest extends GameMaster
 	private void goToJail()
 	{
 		doubleCounter = 0;
-		playerPos = 10;
+		playerPos = 10; //move player to jail
 		boolean free = false;
 
 		jailCount++;
 		this.next(); //lose turn
 
-		//assume that if it has any cards then it must be a get out of jail free card
+		//assume that if player has any cards then it must be a get out of jail free card
 		if(bot.getHandSize() > 0)
 		{
-			bot.discardCard(0);
+			Card discard = bot.discardCard(0);
+			if(discard.getType() == Card.IS_COMMUNITY)
+				chestDeck.discard(discard);
+			else if(discard.getType() == Card.IS_CHANCE)
+				chanceDeck.discard(discard);
 		}
+		
 		else
 		{
 			if(stratB)
@@ -361,6 +366,7 @@ public class MonopolyTest extends GameMaster
 				if(!free)
 				{
 					rollDice();
+					
 					if(doubleCounter == 0)
 					{
 						jailBond -= 50;
@@ -397,6 +403,24 @@ public class MonopolyTest extends GameMaster
 
 		return print;
 
+	}
+	
+	private void testDebug()
+	{
+		app.out("you were jailed "+jailCount+" times ._.");
+		app.out("drew the jail card "+jailedFromCard+" times");
+		app.out("landed on 'Go To Jail' "+jailedFromSpace+" times");
+		app.out("caught speeding "+jailedFromSpeed+" times");
+		app.out("paid "+jailBond+" in jail money");
+		
+		app.out("Chance Deck:");
+		chanceDeck.drawDebug();
+		chanceDeck.discardDebug();
+		
+		app.out("Chest Deck:");
+		chestDeck.drawDebug();
+		chestDeck.discardDebug();
+	
 	}
 
 }
