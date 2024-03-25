@@ -1,13 +1,13 @@
 package mpoly.model.games;
 
-import mpoly.controller.MPolyController;
 import mpoly.model.players.Player;
 
 import java.util.Scanner;
 import java.util.ArrayList;
 
 /**
- * in charge of gameplay
+ * Basic logic for common gameplay elements.
+ * Keeps track of player order (if used) and how many turns have passed 
  * 
  * @author Skyler
  *
@@ -25,11 +25,6 @@ public abstract class GameMaster
 		consoleIn = new Scanner(System.in);
 		currentTurn = 0;
 		turnCount = 0;
-	}
-
-	public enum Game
-	{
-		GO_FISH, GARBAGE, UNO;
 	}
 
 	/**
@@ -159,23 +154,6 @@ public abstract class GameMaster
 	{
 		currentTurn = 0;
 		turnCount = 0;
-	}
-	
-	public boolean validInt(String word, int minInclusive, int maxExclusive)
-	{
-		boolean valid = false;
-		
-		try
-		{
-			int num = Integer.parseInt(word);
-			valid = (num >= minInclusive && num < maxExclusive);
-		}
-		catch(Exception e)
-		{
-			
-		}
-		
-		return valid;
 	}
 
 }

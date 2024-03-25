@@ -33,12 +33,12 @@ public class MPolyController
 		System.out.println(message);
 	}
 	
-	public void saveString(String textToSave, String title)
+	public void saveString(String textToSave, String filename)
 	{
 		try
 		{
 			String path = System.getProperty("user.dir");
-			File temp = new File(path + "//"+title+ ".txt");
+			File temp = new File(path + "//"+filename+ ".txt");
 			Scanner reader = new Scanner(textToSave);
 			PrintWriter output = new PrintWriter(temp);
 
