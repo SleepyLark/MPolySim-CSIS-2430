@@ -426,13 +426,21 @@ public class MonopolyTest extends GameMaster
 
 	private String printBoard(int[][] sample)
 	{
-		String print = "";
-		int total =0;
+		String row = "+-----------------------+------------+----------+\n";
+		String print = row+String.format("| %-21s | %10s | %8s |\n","Space","Count","%")+row;
+		float total = 0;
+		
 		for(int i = 0; i < sample[0].length; i++)
 		{
-			print += spaces[i]+":"+sample[0][i]+" times\n";
+			total += sample[3][i];
 		}
-		print += "Total: "+total;
+		
+		for(int i = 0; i < sample[0].length; i++)
+		{
+			print += String.format("| %-21s | %10s | %8.2f |\n",spaces[i], sample[3][i],(sample[3][i]/total)*100);
+		}
+		
+		print += row;
 
 		return print;
 
