@@ -137,25 +137,32 @@ public class MonopolyTest extends GameMaster
 	{
 		int counter = 0;
 		String out = "";
+		String outCSV = "";
 		while(counter < 10)
 		{
 			counter++;
 			runSim(false);
-			out +="Test # "+counter+"\n" + printBoard(snapshot) +"\n";
+			out +="Test # "+counter+"\n" + printBoard(snapshot)[0] +"\n";
+			outCSV +="Test # "+counter+"\n" + printBoard(snapshot)[1] +"\n";
+			
 		}
 		
-		app.saveString(out,"stratA");
+		app.saveString(out,"stratA.txt");
+		app.saveString(outCSV,"stratA.csv");
 		
 		counter = 0;
 		out = "";
+		outCSV = "";
 		while(counter < 10)
 		{
 			counter++;
 			runSim(true);
-			out +="Test # "+counter+"\n" + printBoard(snapshot) +"\n";
+			out +="Test # "+counter+"\n" + printBoard(snapshot)[0] +"\n";
+			outCSV +="Test # "+counter+"\n" + printBoard(snapshot)[1] +"\n";
 		}
 		
-		app.saveString(out,"stratB");
+		app.saveString(out,"stratB.txt");
+		app.saveString(outCSV,"stratB.csv");
 		
 		
 		
@@ -473,8 +480,10 @@ public class MonopolyTest extends GameMaster
 		}
 	}
 
-	private String printBoard(int[][] sample)
+	private String[] printBoard(int[][] sample)
 	{
+		String[] out = new String[2];
+		
 		String col1 = "-----------------------";
 		String col2 = "----------+----------";
 		String col3 = "---------------------";
@@ -482,6 +491,10 @@ public class MonopolyTest extends GameMaster
 		String subCol = String.format(" %8s | %8s ","Count","%");
 		String header = border+String.format("| %-21s |%s|%s|%s|%s|\n","Space",subCol,subCol,subCol,subCol)+border;
 		String print = border+String.format("| %-21s |  %-19s|  %-19s|  %-19s|  %-19s|\n","","n = 1,000","n = 10,000","n = 100,000","n = 1,000,000");
+		
+		
+		String headerCSV = "Space,Count,%,Count,%,Count,%,Count,%\n";
+		String printCSV = headerCSV+",n = 1000,,n = 10000,,n = 100000,,n = 1000000,,\n";
 		int[] total = new int[4];
 		
 		print += header;
@@ -497,13 +510,19 @@ public class MonopolyTest extends GameMaster
 		
 		for(int i = 0; i < sample[0].length; i++)
 		{
-			print += String.format("| %-21s | %8s | %8.2f | %8s | %8.2f | %8s | %8.2f | %8s | %8.2f |\n",spaces[i], sample[0][i],((float)sample[0][i]/total[0]) * 100, sample[1][i],((float)sample[1][i]/total[1]) * 100 ,sample[2][i],((float)sample[2][i]/total[2]) * 100 ,sample[3][i],((float)sample[3][i]/total[3]) * 100);
+			print += String.format("| %-21s | %8s | %8.2f | %8s | %8.2f | %8s | %8.2f | %8s | %8.2f |\n",
+					spaces[i], sample[0][i],((float)sample[0][i]/total[0]) * 100, sample[1][i],((float)sample[1][i]/total[1]) * 100 ,sample[2][i],((float)sample[2][i]/total[2]) * 100 ,sample[3][i],((float)sample[3][i]/total[3]) * 100);
+			printCSV += String.format("%s,%s,%.2f,%s,%.2f,%s,%.2f,%s,%.2f,\n",
+					spaces[i], sample[0][i],((float)sample[0][i]/total[0]) * 100, sample[1][i],((float)sample[1][i]/total[1]) * 100 ,sample[2][i],((float)sample[2][i]/total[2]) * 100 ,sample[3][i],((float)sample[3][i]/total[3]) * 100);
 		}
 		
 		
 		print += border;
+		
+		out[0] = print;
+		out[1] = printCSV;
 
-		return print;
+		return out;
 
 	}
 	

@@ -38,7 +38,7 @@ public class MPolyController
 		try
 		{
 			String path = System.getProperty("user.dir");
-			File temp = new File(path + "//"+filename+ ".txt");
+			File temp = new File(path + "//"+filename);
 			Scanner reader = new Scanner(textToSave);
 			PrintWriter output = new PrintWriter(temp);
 
