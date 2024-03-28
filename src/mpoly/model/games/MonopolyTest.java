@@ -2,6 +2,8 @@ package mpoly.model.games;
 
 
 
+import java.util.Arrays;
+
 import mpoly.controller.MPolyController;
 import mpoly.model.cards.*;
 import mpoly.model.dealers.*;
@@ -133,6 +135,49 @@ public class MonopolyTest extends GameMaster
 	@Override
 	public void startGame()
 	{
+		int counter = 0;
+		String out = "";
+		while(counter < 10)
+		{
+			counter++;
+			runSim(false);
+			out +="Test # "+counter+"\n" + printBoard(snapshot) +"\n";
+		}
+		
+		app.saveString(out,"stratA");
+		
+		counter = 0;
+		out = "";
+		while(counter < 10)
+		{
+			counter++;
+			runSim(true);
+			out +="Test # "+counter+"\n" + printBoard(snapshot) +"\n";
+		}
+		
+		app.saveString(out,"stratB");
+		
+		
+		
+		//testDebug();
+
+
+	}
+
+	@Override
+	protected void setupGame()
+	{
+		this.addToGame(bot);
+		chanceDeck.shuffleCards();
+		chestDeck.shuffleCards();
+	}
+	
+	private void runSim(boolean useStratB)
+	{
+		this.restart();
+		
+		stratB = useStratB;
+		
 		while(this.turnCount < 1000)
 		{
 			play();
@@ -156,23 +201,6 @@ public class MonopolyTest extends GameMaster
 			play();
 		}
 		snapshot[3]=gameBoard.clone();
-
-		app.out(this.printBoard(snapshot));
-		
-		
-		//testDebug();
-
-
-	}
-
-	@Override
-	protected void setupGame()
-	{
-		this.addToGame(bot);
-		chanceDeck.shuffleCards();
-		chestDeck.shuffleCards();
-
-
 	}
 
 	private void restart()
@@ -185,6 +213,25 @@ public class MonopolyTest extends GameMaster
 		chestDeck.buildDeck();
 		chestDeck.shuffleCards();
 		bot.destroyHand();
+		
+		doubleCounter = 0;
+		jailCount = 0;
+		jailedFromCard = 0;
+		jailedFromSpace = 0;
+		jailedFromSpeed =0;
+		
+		for(int i = 0; i < gameBoard.length; i++)
+			gameBoard[i] = 0;
+		
+		for(int row = 0; row < snapshot.length; row++)
+			for(int col = 0; col < snapshot[0].length; col++)
+				snapshot[row][col] = 0;
+		
+		playerPos = 0;
+		jailBond = 0;
+		
+		outOfJail = true;
+		stratB = false;
 
 	}
 
@@ -436,7 +483,6 @@ public class MonopolyTest extends GameMaster
 		String header = border+String.format("| %-21s |%s|%s|%s|%s|\n","Space",subCol,subCol,subCol,subCol)+border;
 		String print = border+String.format("| %-21s |  %-19s|  %-19s|  %-19s|  %-19s|\n","","n = 1,000","n = 10,000","n = 100,000","n = 1,000,000");
 		int[] total = new int[4];
-		//float[] percentage = new float[sample[0].length];
 		
 		print += header;
 		

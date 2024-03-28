@@ -36,12 +36,12 @@ public abstract class Dealer
 	public abstract void buildDeck();
 	
 	/**
-	 * Overwrite the stack with a new one (which should be the same as deleting each element, but probably not)
+	 * Clears the stacks
 	 */
 	public void destroyDeck()
 	{
-		drawDeck = new ArrayList<Card>();
-		discardPile = new ArrayList<Card>();
+		drawDeck.clear();
+		discardPile.clear();
 	}
 	
 	/**
