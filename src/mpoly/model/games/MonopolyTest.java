@@ -1,5 +1,7 @@
 package mpoly.model.games;
 
+
+
 import mpoly.controller.MPolyController;
 import mpoly.model.cards.*;
 import mpoly.model.dealers.*;
@@ -158,7 +160,7 @@ public class MonopolyTest extends GameMaster
 		app.out(this.printBoard(snapshot));
 		
 		
-		testDebug();
+		//testDebug();
 
 
 	}
@@ -426,21 +428,34 @@ public class MonopolyTest extends GameMaster
 
 	private String printBoard(int[][] sample)
 	{
-		String row = "+-----------------------+------------+----------+\n";
-		String print = row+String.format("| %-21s | %10s | %8s |\n","Space","Count","%")+row;
-		float total = 0;
+		String col1 = "-----------------------";
+		String col2 = "----------+----------";
+		String col3 = "---------------------";
+		String border = String.format("+%s+%s+%s+%s+%s+\n",col1,col2,col2,col2,col2);
+		String subCol = String.format(" %8s | %8s ","Count","%");
+		String header = border+String.format("| %-21s |%s|%s|%s|%s|\n","Space",subCol,subCol,subCol,subCol)+border;
+		String print = border+String.format("| %-21s |  %-19s|  %-19s|  %-19s|  %-19s|\n","","n = 1,000","n = 10,000","n = 100,000","n = 1,000,000");
+		int[] total = new int[4];
+		//float[] percentage = new float[sample[0].length];
 		
-		for(int i = 0; i < sample[0].length; i++)
+		print += header;
+		
+		for(int test = 0; test < sample.length; test++)
 		{
-			total += sample[3][i];
+			for(int i = 0; i < sample[0].length; i++)
+			{
+				total[test] += sample[test][i];
+			}
+			
 		}
 		
 		for(int i = 0; i < sample[0].length; i++)
 		{
-			print += String.format("| %-21s | %10s | %8.2f |\n",spaces[i], sample[3][i],(sample[3][i]/total)*100);
+			print += String.format("| %-21s | %8s | %8.2f | %8s | %8.2f | %8s | %8.2f | %8s | %8.2f |\n",spaces[i], sample[0][i],((float)sample[0][i]/total[0]) * 100, sample[1][i],((float)sample[1][i]/total[1]) * 100 ,sample[2][i],((float)sample[2][i]/total[2]) * 100 ,sample[3][i],((float)sample[3][i]/total[3]) * 100);
 		}
 		
-		print += row;
+		
+		print += border;
 
 		return print;
 
