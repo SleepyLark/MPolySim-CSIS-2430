@@ -104,6 +104,10 @@ public abstract class GameMaster
 		return playerOrder;
 	}
 
+	/**
+	 * Returns number of players in game
+	 * @return number of players
+	 */
 	public int numberOfPlayers()
 	{
 		return playerOrder.size();
@@ -113,7 +117,7 @@ public abstract class GameMaster
 	// =====[TURN MANAGEMENT]=====
 
 	/**
-	 * switches to the next player <br>
+	 * Switches to the next player <br>
 	 * <i> uses a "modulus" effect where the number will cycle back to zero once it
 	 * hits max number. useful for readability</i>
 	 */
