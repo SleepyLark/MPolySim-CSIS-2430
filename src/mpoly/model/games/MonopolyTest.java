@@ -270,7 +270,6 @@ public class MonopolyTest extends GameMaster
 	private void play()
 	{
 		int diceRoll = rollDice();
-		playerPos = (diceRoll + playerPos) % 40;
 		
 		//if 3 consecutive doubles are rolled, go to jail
 		if(doubleCounter >= 3)
@@ -284,57 +283,10 @@ public class MonopolyTest extends GameMaster
 		{
 			//end your turn
 			this.next();
-			
-			//if strategy B is on...
-			if(stratB)
-			{
-				
-				//player gets 3 tries to roll doubles and escape.
-				int attempts = 0;
-				
-				while(attempts < 2)
-				{
-					diceRoll = rollDice();
-					if(doubleCounter == 1)
-					{
-						/**
-						 *  if you succeed in doing this you immediately move forward
-						the number of spaces shown by your doubles throw; even though you
-						had thrown doubles, you do not take another turn;
-						 */
-						outOfJail = true;
-						break;
-					}
-					attempts++;
-					this.next(); //skip a turn
-				}
-				//if after 2 tries your still not out of jail...
-				if(!outOfJail)
-				{
-					//roll the dice
-					diceRoll = rollDice();
-
-					if(doubleCounter == 0)
-					{
-						jailBond -= 50;
-					}
-					else
-						doubleCounter = 0;
-				}
-
-			}
-			else
-			{
-				//if strategy A is used, than you immediately pay the fee and continue your turn
-				jailBond -= 50;
-				diceRoll = rollDice();
-				
-			}
-			//continue playing the game and move the space rolled
-			playerPos = (diceRoll + playerPos) % 40;
-			outOfJail = true;
+			diceRoll = EscapeJail(stratB);
 		}
-
+		
+		playerPos = (diceRoll + playerPos) % 40;
 		gameBoard[playerPos]++; //update what space the player landed
 		switch(playerPos)
 		{
@@ -515,6 +467,63 @@ public class MonopolyTest extends GameMaster
 		}
 	}
 	
+	/**
+	 * Determines how the player escapes jail and how many turns have passed
+	 * @param stratB whether to use strategy B or not
+	 * @return The final dice roll after escaping jail
+	 */
+	private int EscapeJail(boolean stratB)
+	{
+		int diceRoll = 0;
+		//if strategy B is on...
+		if(stratB)
+		{
+			
+			//player gets 3 tries to roll doubles and escape.
+			int attempts = 0;
+			
+			while(attempts < 2)
+			{
+				diceRoll = rollDice();
+				if(doubleCounter == 1)
+				{
+					/**
+					 *  if you succeed in doing this you immediately move forward
+					the number of spaces shown by your doubles throw; even though you
+					had thrown doubles, you do not take another turn;
+					 */
+					outOfJail = true;
+					break;
+				}
+				attempts++;
+				this.next(); //skip a turn
+			}
+			//if after 2 tries your still not out of jail...
+			if(!outOfJail)
+			{
+				//roll the dice
+				diceRoll = rollDice();
+
+				if(doubleCounter == 0)
+				{
+					jailBond -= 50;
+				}
+				else
+					doubleCounter = 0;
+			}
+
+		}
+		else
+		{
+			//if strategy A is used, than you immediately pay the fee and continue your turn
+			jailBond -= 50;
+			diceRoll = rollDice();
+			
+		}
+		outOfJail = true;
+		
+		return diceRoll;
+	}
 	/**
 	 * Calculates where the nearest railroad is based off of where they drew the card
 	 */
