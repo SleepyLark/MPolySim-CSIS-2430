@@ -6,7 +6,7 @@ import java.util.Comparator;
 import mpoly.model.cards.*;
 
 /**
- * Skills need for any card game
+ * Skills needed for any card game
  * 
  * @author Skyler
  *
@@ -60,7 +60,7 @@ public abstract class Player
 	
 	public void destroyHand()
 	{
-		currentHand = new ArrayList<Card>();
+		currentHand.clear();
 	}
 
 	/**
