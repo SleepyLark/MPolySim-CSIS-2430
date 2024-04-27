@@ -291,8 +291,6 @@ public class MonopolyTest extends GameMaster
 		//if the player is still in jail...
 		if(!outOfJail)
 		{
-			//end your turn
-			this.next();
 			diceRoll = EscapeJail(stratB);
 		}
 		
@@ -460,8 +458,12 @@ public class MonopolyTest extends GameMaster
 	{
 		doubleCounter = 0; //reset double counter
 		playerPos = 10; //move player to jail
+		gameBoard[playerPos]++;
 		outOfJail = false; //player is now in jail
 		jailCount++;
+		
+		//end your turn
+		this.next();
 
 		//assume that if player has any cards then it must be a get out of jail free card
 		if(bot.getHandSize() > 0)
