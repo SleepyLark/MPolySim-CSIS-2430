@@ -27,6 +27,7 @@ public abstract class Card
     	return this.number;
     }
     
+    //The following functions are common elements in both decks
     public boolean isJail()
     {
     	return number == GO_TO_JAIL;

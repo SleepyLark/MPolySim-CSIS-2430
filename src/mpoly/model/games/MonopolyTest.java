@@ -131,15 +131,18 @@ public class MonopolyTest extends GameMaster
 		snapshot = new int[4][40];
 		outOfJail = true;
 		stratB = false;
+		setupGame();
 	}
 
 	@Override
 	public void startGame()
 	{
+		app.out("Starting simulation....");
 		int counter = 0; //keep track of current test
 		String out = "";
 		String outCSV = "";
 		//run 10 simulations for strategy A
+		app.out("Strategy A:");
 		while(counter < 10)
 		{
 			counter++;
@@ -147,6 +150,7 @@ public class MonopolyTest extends GameMaster
 			String[] testResults = printBoard(snapshot);
 			out +="Test # "+counter+"\n" + testResults[0] +"\n";
 			outCSV +="Test # "+counter+"\n" + testResults[1] +"\n";
+			app.out("Finished test "+counter);
 			
 		}
 		//export test results
@@ -158,6 +162,7 @@ public class MonopolyTest extends GameMaster
 		out = "";
 		outCSV = "";
 		//run 10 simulation for strategy B
+		app.out("Strategy B:");
 		while(counter < 10)
 		{
 			counter++;
@@ -165,12 +170,13 @@ public class MonopolyTest extends GameMaster
 			String[] testResults = printBoard(snapshot);
 			out +="Test # "+counter+"\n" + testResults[0] +"\n";
 			outCSV +="Test # "+counter+"\n" + testResults[1] +"\n";
+			app.out("Finished test "+counter);
 		}
 		//export test results
 		app.saveString(out,"stratB.txt");
 		app.saveString(outCSV,"stratB.csv");
 		
-		
+		app.out("Simulation finished. Check the root of the project folder to see the results.");
 		
 		//testDebug();
 
@@ -184,6 +190,9 @@ public class MonopolyTest extends GameMaster
 	protected void setupGame()
 	{
 		this.addToGame(bot);
+		chanceDeck.buildDeck();
+		chestDeck.buildDeck();
+		
 		chanceDeck.shuffleCards();
 		chestDeck.shuffleCards();
 	}
@@ -236,6 +245,7 @@ public class MonopolyTest extends GameMaster
 		chanceDeck.destroyDeck();
 		chanceDeck.buildDeck();
 		chanceDeck.shuffleCards();
+		
 		chestDeck.destroyDeck();
 		chestDeck.buildDeck();
 		chestDeck.shuffleCards();
