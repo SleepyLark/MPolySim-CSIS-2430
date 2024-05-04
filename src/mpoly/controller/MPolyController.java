@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+
+import javax.swing.JOptionPane;
+
 import mpoly.model.games.*;
 
 /**
@@ -74,7 +77,9 @@ public class MPolyController
 				"                                    +%:                                                   \r\n" + 
 				"                                     =%*-:.                                               \r\n" + 
 				"");
+		JOptionPane.showMessageDialog(null,"Click OK to start simulation","Monopoly Sim",JOptionPane.DEFAULT_OPTION);
 		game.startGame();
+		JOptionPane.showMessageDialog(null,"Finished, check root folder where .jar file is for results.","Monopoly Sim",JOptionPane.DEFAULT_OPTION);
 	}
 	
 	/**
