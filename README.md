@@ -3,4 +3,4 @@
  
  This is a final project for a Discrete Structures class to determine probability of landing on certain spaces in Monopoly by running multiple test.
  
- The code is basically a fork of an older side project I was doing that was about card games.
+ The code is basically a fork of an [older side project](https://github.com/SleepyLark/Cardinal/) I was doing that was about card games.
