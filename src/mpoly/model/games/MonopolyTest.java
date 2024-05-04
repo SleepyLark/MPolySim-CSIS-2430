@@ -43,7 +43,7 @@ public class MonopolyTest extends GameMaster
 	26 Atlantic Avenue
 	27 Ventnor Avenue
 	28 Water Works
-	39 Marvin Gardens
+	29 Marvin Gardens
 	30 Go To Jail
 	31 Pacific Avenue
 	32 North Carolina Avenue
