@@ -79,7 +79,7 @@ public class MPolyController
 				"");
 		JOptionPane.showMessageDialog(null,"Click OK to start simulation","Monopoly Sim",JOptionPane.DEFAULT_OPTION);
 		game.startGame();
-		JOptionPane.showMessageDialog(null,"Finished, check root folder where .jar file is for results.","Monopoly Sim",JOptionPane.DEFAULT_OPTION);
+		JOptionPane.showMessageDialog(null,"Finished, check \"results\" folder where .jar file is for test results.","Monopoly Sim",JOptionPane.DEFAULT_OPTION);
 	}
 	
 	/**
@@ -102,7 +102,9 @@ public class MPolyController
 		{
 			//Create a new file and write to it. if something files it will go to the "catch" block which has nothing inside it :P
 			String path = System.getProperty("user.dir");
-			File temp = new File(path + "//"+filename);
+			File dir = new File (path+"//results");
+			dir.mkdir();
+			File temp = new File(path + "//results//"+filename);
 			Scanner reader = new Scanner(textToSave);
 			PrintWriter output = new PrintWriter(temp);
 
